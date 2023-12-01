@@ -1,0 +1,3 @@
+[submodule "data"]
+	path = data
+	url = https://github.com/mmdoogie/adventofcode2023_input.git
