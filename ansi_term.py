@@ -1,49 +1,83 @@
 from contextlib import contextmanager
 
 ESC = chr(27)
+
+CURSOR_HOME = ESC + '[H'
+CLEAR_SCREEN = CURSOR_HOME + ESC + '[2J'
 CLEAR_LINE = ESC + '[K'
 
+COLOR_RED = ESC + '[31m'
+COLOR_GREEN = ESC + '[32m'
+COLOR_YELLOW = ESC + '[33m'
+COLOR_BLUE = ESC + '[34m'
+COLOR_MAGENTA = ESC + '[35m'
+COLOR_CYAN = ESC + '[36m'
+
+TEXT_BOLD = ESC + '[1m'
+TEXT_ITALIC = ESC + '[3m'
+TEXT_UNDERLINE = ESC + '[4m'
+TEXT_RESET = ESC + '[0m'
+
+SAVE_CURSOR = ESC + '[s'
+RESTORE_CURSOR = ESC + '[u'
+
+HIDE_CURSOR = ESC + '[?25l'
+SHOW_CURSOR = ESC + '[?25h'
+
 def clear_line():
-    print(CLEAR_LINE)
+    print(CLEAR_LINE, end = '')
 
 def cursor_home():
-    print(ESC + '[H')
+    print(CURSOR_HOME, end = '')
 
 def clear_screen():
-    cursor_home()
-    print(ESC + '[2J')
+    print(CLEAR_SCREEN, end = '')
 
 def red(txt):
-    return ESC + '[31m' + txt + ESC + '[0m'
+    return COLOR_RED + txt + TEXT_RESET
 
 def green(txt):
-    return ESC + '[32m' + txt + ESC + '[0m'
+    return COLOR_GREEN + txt + TEXT_RESET
 
 def yellow(txt):
-    return ESC + '[33m' + txt + ESC + '[0m'
+    return COLOR_YELLOW + txt + TEXT_RESET
 
 def blue(txt):
-    return ESC + '[34m' + txt + ESC + '[0m'
+    return COLOR_BLUE + txt + TEXT_RESET
 
 def magenta(txt):
-    return ESC + '[35m' + txt + ESC + '[0m'
+    return COLOR_MAGENTA + txt + TEXT_RESET
 
 def cyan(txt):
-    return ESC + '[36m' + txt + ESC + '[0m'
+    return COLOR_CYAN + txt + TEXT_RESET
 
 def bold(txt):
-    return ESC + '[1m' + txt + ESC + '[0m'
+    return TEXT_BOLD + txt + TEXT_RESET
 
 def italic(txt):
-    return ESC + '[3m' + txt + ESC + '[0m'
+    return TEXT_ITALIC + txt + TEXT_RESET
 
 def underline(txt):
-    return ESC + '[4m' + txt + ESC + '[0m'
+    return TEXT_UNDERLINE + txt + TEXT_RESET
+
+def save_cursor():
+    print(SAVE_CURSOR, end = '')
+
+def restore_cursor():
+    print(RESTORE_CURSOR, end = '')
 
 @contextmanager
-def hidden_cursor():
-    print(ESC + '[?25l')
+def restored_cursor():
+    restore_cursor()
     try:
         yield None
     finally:
-        print(ESC + '[?25h')
+        save_cursor()
+
+@contextmanager
+def hidden_cursor():
+    print(HIDE_CURSOR, end = '')
+    try:
+        yield None
+    finally:
+        print(SHOW_CURSOR, end = '')
