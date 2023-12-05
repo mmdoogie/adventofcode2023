@@ -82,11 +82,12 @@ def part2(output = True):
         set_power = reduce(mul, required_cubes.values())
         power_sum += set_power
 
-        print('Game requires: ', end = '')
-        for color, code in COLOR_CODES.items():
-            print(code + f'{"*" * required_cubes[color]:<25s}' + ansi.TEXT_RESET, end = '')
-        print(f' Set Power: {set_power:<5d} --> Total Sum: {power_sum:<5d}')
-        print()
+        if output:
+            print('Game requires: ', end = '')
+            for color, code in COLOR_CODES.items():
+                print(code + f'{"*" * required_cubes[color]:<25s}' + ansi.TEXT_RESET, end = '')
+            print(f' Set Power: {set_power:<5d} --> Total Sum: {power_sum:<5d}')
+            print()
 
     return power_sum
 

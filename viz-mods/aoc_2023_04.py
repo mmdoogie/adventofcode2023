@@ -5,8 +5,8 @@ from time import sleep
 with open('data/aoc-2023-04.txt', encoding = 'utf-8') as f:
     dat = [x.strip('\n') for x in f.readlines()]
 
-leftcol = 0
-currrow = 0
+leftcol = 1
+currrow = 1
 def tprint(x='', **kwargs):
     global currrow
     if 'end' in kwargs:
@@ -23,7 +23,7 @@ def part1(output = True):
 
     with ansi.hidden_cursor():
 
-        resetrow = 0
+        resetrow = 1
         for d in dat:
             win_numbers, my_numbers = d.split(': ')[1].split(' | ')
             win_numbers = [int(x) for x in win_numbers.split(' ') if x != '']
@@ -72,7 +72,7 @@ def part1(output = True):
                 leftcol = 0
                 resetrow += 18
                 if resetrow >= 3*18:
-                    resetrow = 0
+                    resetrow = 1
                     sleep(0.5)
                     ansi.clear_screen()
 
