@@ -2,6 +2,8 @@ from functools import reduce
 from operator import mul
 from collections import defaultdict
 
+from mrm.point_2d import adj_diag
+
 with open('data/aoc-2023-03.txt', encoding = 'utf-8') as f:
     dat = [x.strip('\n') for x in f.readlines()]
 
@@ -34,9 +36,7 @@ def part1(output = True):
         adj = set()
         for w in range(width):
             wx = x + w
-            adj.update([(wx - 1, y - 1), (wx - 1, y), (wx - 1, y + 1),
-                        (wx,     y - 1),              (wx,     y + 1),
-                        (wx + 1, y - 1), (wx + 1, y), (wx + 1, y + 1)])
+            adj.update(adj_diag((wx, y)))
         if any(a in symbols for a in adj):
             part_num_sum += num
 
@@ -51,9 +51,7 @@ def part2(output = True):
         adj = set()
         for w in range(width):
             wx = x + w
-            adj.update([(wx - 1, y - 1), (wx - 1, y), (wx - 1, y + 1),
-                        (wx,     y - 1),              (wx,     y + 1),
-                        (wx + 1, y - 1), (wx + 1, y), (wx + 1, y + 1)])
+            adj.update(adj_diag((wx, y)))
         for a in adj:
             if a in symbols and symbols[a] == '*':
                 gears[a].add((x, y))

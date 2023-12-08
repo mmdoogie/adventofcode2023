@@ -3,7 +3,7 @@ from functools import reduce
 from operator import mul
 from time import sleep
 
-import ansi_term as ansi
+import mrm.ansi_term as ansi
 
 with open('data/aoc-2023-02.txt', encoding = 'utf-8') as f:
     dat = [x.strip('\n') for x in f.readlines()]

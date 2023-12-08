@@ -3,7 +3,7 @@ import sys
 import time
 import traceback
 
-import ansi_term as ansi
+import mrm.ansi_term as ansi
 
 RESULT_MODULE_NAME = 'data.results'
 RESULT_MODULE = __import__(RESULT_MODULE_NAME).results

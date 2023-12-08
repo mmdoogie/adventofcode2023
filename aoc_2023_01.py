@@ -1,4 +1,4 @@
-import ansi_term as ansi
+import mrm.ansi_term as ansi
 
 with open('data/aoc-2023-01.txt', encoding = 'utf-8') as f:
     dat = [x.strip('\n') for x in f.readlines()]
