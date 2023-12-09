@@ -67,6 +67,14 @@ def restore_cursor():
     print(RESTORE_CURSOR, end = '')
 
 @contextmanager
+def text_attr(attr):
+    print(attr, end='')
+    try:
+        yield None
+    finally:
+        print(TEXT_RESET, end='')
+
+@contextmanager
 def restored_cursor():
     restore_cursor()
     try:
