@@ -2,7 +2,7 @@ from functools import reduce
 from operator import mul
 from collections import defaultdict
 
-from mrm.point_2d import adj_diag
+from mrm.point import adj_diag
 
 with open('data/aoc-2023-03.txt', encoding = 'utf-8') as f:
     dat = [x.strip('\n') for x in f.readlines()]
