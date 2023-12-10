@@ -69,17 +69,14 @@ def part1(output = True):
 
     return len(path) // 2
 
-def inside_polygon(path_tiles, x, y, min_x, max_x):
+def inside_polygon_row(path_tiles, y, min_x, max_x):
     cross_cnt = 0
     prev_tile = False
-    if x > max_x / 2:
-        scan_range = range(x, max_x + 5)
-    else:
-        scan_range = range(min_x - 5, x)
 
-    for xx in scan_range:
-        if (xx, y) in path_tiles:
-            curr_tile = path_tiles[(xx, y)]
+    counts = []
+    for x in range(min_x, max_x + 1):
+        if (x, y) in path_tiles:
+            curr_tile = path_tiles[(x, y)]
             if prev_tile == 'F' and curr_tile in 'J7':
                 if curr_tile == 'J':
                     cross_cnt += 1
@@ -93,7 +90,8 @@ def inside_polygon(path_tiles, x, y, min_x, max_x):
                 cross_cnt += 1
             elif curr_tile not in '-J7@':
                 prev_tile = curr_tile
-    return cross_cnt % 2 == 1
+        counts += [cross_cnt]
+    return counts
 
 def part2(output = True):
     tiles, start = parse()
@@ -110,10 +108,11 @@ def part2(output = True):
     min_y, max_y = minmax_y(path)
 
     for y in range(min_y, max_y + 1):
+        cross_counts = inside_polygon_row(path_tiles, y, min_x, max_x)
         for x in range(min_x, max_x + 1):
             if (x, y) in path_tiles:
                 continue
-            if inside_polygon(path_tiles, x, y, min_x, max_x):
+            if cross_counts[x - min_x] % 2:
                 path_tiles[(x, y)] = '@'
                 enclosed_cnt += 1
 
@@ -122,7 +121,7 @@ def part2(output = True):
         char_swap = {'F': '\u250c', 'J': '\u2518',
                      '7': '\u2510', 'L': '\u2514',
                      '-': '\u2500', '|': '\u2502',
-                     'S': 'S',      '@': 'o'}
+                     'S': 'x',      '@': 'o'}
         pretty_tiles = {p: char_swap[path_tiles[p]] for p in path_tiles}
         pretty_tiles[start] = ansi.yellow('x')
         print_image(pretty_tiles, True, '\u00b7', 'o', ansi.magenta)
