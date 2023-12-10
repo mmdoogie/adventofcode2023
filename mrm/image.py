@@ -4,33 +4,54 @@ from subprocess import Popen, PIPE
 from PIL import Image
 from PIL.ImageDraw import Draw
 
-def _min_pos(pos):
+def min_xy(pos):
     min_x = min(p[0] for p in pos)
     min_y = min(p[1] for p in pos)
 
     return min_x, min_y
 
-def _max_pos(pos):
+def max_xy(pos):
     max_x = max(p[0] for p in pos)
     max_y = max(p[1] for p in pos)
 
     return max_x, max_y
 
-def print_image(pos):
-    min_x, min_y = _min_pos(pos)
-    max_x, max_y = _max_pos(pos)
+def minmax_x(pos):
+    min_x = min(p[0] for p in pos)
+    max_x = max(p[0] for p in pos)
+
+    return min_x, max_x
+
+def minmax_y(pos):
+    min_y = min(p[1] for p in pos)
+    max_y = max(p[1] for p in pos)
+
+    return min_y, max_y
+
+def print_image(pos, use_char = False, default_char = ' ', highlight_char = False, highlight_fn = lambda x: x):
+    min_x, min_y = min_xy(pos)
+    max_x, max_y = max_xy(pos)
 
     for y in range(min_y, max_y + 1):
         for x in range(min_x, max_x + 1):
-            if [x, y] in pos:
-                print('**', end = '')
+            if (x, y) in pos:
+                if use_char:
+                    if highlight_char == pos[(x, y)]:
+                        print(highlight_fn(pos[(x, y)]), end = '')
+                    else:
+                        print(pos[(x, y)], end = '')
+                else:
+                    print('**', end = '')
             else:
-                print('  ', end='')
+                if use_char:
+                    print(default_char, end = '')
+                else:
+                    print('  ', end='')
         print()
 
 def make_image(pos, output):
-    min_x, min_y = _min_pos(pos)
-    max_x, max_y = _max_pos(pos)
+    min_x, min_y = min_xy(pos)
+    max_x, max_y = max_xy(pos)
 
     width = max_x - min_x
     height = max_y - min_y
