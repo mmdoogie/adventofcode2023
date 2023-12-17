@@ -5,13 +5,23 @@ def djikstra(neighbors_dict, weights_dict = defaultdict(lambda: 1), start_point 
     curr_point = start_point
 
     weights = {curr_point: 0}
-    explore = {}
+    explore = defaultdict(set)
     if keep_paths:
         paths = {curr_point: [curr_point]}
 
+    if isinstance(end_point, list):
+        found_ends = {e: False for e in end_point}
+    else:
+        found_ends = {end_point: False}
+
     while True:
-        if end_point is not None and curr_point == end_point:
-            break
+        if end_point is not None:
+            if curr_point in found_ends:
+                found_ends[curr_point] = True
+            if curr_point == end_point:
+                break
+            if all(found_ends.values()):
+                break
         visited.add(curr_point)
         if keep_paths:
             curr_path = paths[curr_point]
@@ -23,13 +33,21 @@ def djikstra(neighbors_dict, weights_dict = defaultdict(lambda: 1), start_point 
                     if keep_paths:
                         paths[n] = curr_path + [n]
                 if n not in visited:
-                    explore[n] = curr_weight + dist_est(n)
+                    explore[curr_weight + dist_est(n)].add(n)
 
-        if len(explore) == 0:
+        buckets = sorted(explore.keys())
+        while curr_point in visited:
+            found_point = False
+            for b in buckets:
+                if len(explore[b]) != 0:
+                    curr_point = explore[b].pop()
+                    found_point = True
+                    break
+                del explore[b]
+            if not found_point:
+                break
+        if not found_point:
             break
-
-        curr_point = min(explore.items(), key=lambda x: x[1])[0]
-        del explore[curr_point]
 
     if keep_paths:
         return weights, paths
