@@ -1,4 +1,5 @@
 from collections import deque
+from itertools import pairwise
 
 from mrm.image import print_image
 from mrm.point import adj_ortho, polygon_grid_squares
@@ -112,20 +113,19 @@ def crossings_for_row(loop_horiz, loop_vert, y):
     return [x for x in toggle_cross if x not in merge]
 
 def compute_area(loop_horiz, loop_vert, output = False):
-    min_y = min(v[0] for v in loop_vert)
-    max_y = max(v[1] for v in loop_vert)
-
     area = 0
-    for y in range(min_y, max_y + 1):
-        cfr = crossings_for_row(loop_horiz, loop_vert, y)
-        for i in range(len(cfr) // 2):
-            area += cfr[2 * i + 1] - cfr[2 * i] + 1
-        if output and y % 10000 == 0:
-            print(y, area)
+    key_y = sorted({item for v in loop_vert for item in [v[0], v[0] + 1, v[1], v[1] + 1]})
 
+    for y, next_y in pairwise(key_y):
+        cfr = crossings_for_row(loop_horiz, loop_vert, y)
+        rows = next_y - y
+        for i in range(len(cfr) // 2):
+            area += rows * (cfr[2 * i + 1] - cfr[2 * i] + 1)
+            if output:
+                print(y, rows, area)
     return area
 
-def part1_alt_crossings(output = True):
+def part1(output = True):
     loop_horiz, loop_vert = parse_crossings(for_part2 = False)
 
     area = compute_area(loop_horiz, loop_vert, output)
@@ -153,7 +153,7 @@ def part1_alt_crossings(output = True):
 
     return area
 
-def part2_alt_crossings(output = True):
+def part2(output = True):
     loop_horiz, loop_vert = parse_crossings(for_part2 = True)
 
     min_y = min(v[0] for v in loop_vert)
@@ -194,17 +194,17 @@ def parse_pts(for_part2 = False):
 
     return pts
 
-def part1(output = True):
+def part1_alt_polygon(output = True):
     pts = parse_pts(for_part2 = False)
     return int(polygon_grid_squares(pts))
 
-def part2(output = True):
+def part2_alt_polygon(output = True):
     pts = parse_pts(for_part2 = True)
     return int(polygon_grid_squares(pts))
 
 if __name__ == '__main__':
     print('Part 1:', part1(True))
     print('Part 1:', part1_alt_floodfill(False), '(alternate method - flood fill)')
-    print('Part 1:', part1_alt_crossings(False), '(alternate method - crossings area)')
+    print('Part 1:', part1_alt_polygon(False), '(alternate method - polygon area)')
     print('Part 2:', part2(True))
-    print('Part 2:', part2_alt_crossings(True))
+    print('Part 2:', part2_alt_polygon(False), '(alternate method - polygon area)')
