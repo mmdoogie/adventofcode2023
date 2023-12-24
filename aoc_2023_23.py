@@ -1,9 +1,7 @@
-from collections import defaultdict, deque
-from mrm.point import adj_ortho, m_dist
+from collections import defaultdict
+
 from mrm.djikstra import djikstra
-from mrm.image import *
-from functools import partial
-from itertools import product
+from mrm.image import max_xy
 
 with open('data/aoc-2023-23.txt', encoding = 'utf-8') as f:
     dat = [x.strip('\n') for x in f.readlines()]
@@ -59,30 +57,29 @@ def make_neigh(tiles):
     return neigh
 
 def viz_path(tiles, path):
-    min_x, min_y = min_xy(tiles)
     max_x, max_y = max_xy(tiles)
 
     print('     ', end='')
-    for x in range(0, max_x + 2):
+    for x in range(max_x + 2):
         if x % 100 == 0:
             print(f'{x//100:<1d}', end='')
         else:
             print(' ', end='')
     print()
     print('     ', end='')
-    for x in range(0, max_x + 2):
+    for x in range(max_x + 2):
         if x % 10 == 0:
             print(f'{(x%100)//10:<1d}', end='')
         else:
             print(' ', end='')
     print()
     print('     ', end='')
-    for x in range(0, max_x + 2):
+    for x in range(max_x + 2):
         print(f'{x%10:<1d}', end='')
     print()
-    for y in range(min_y, max_y + 1):
+    for y in range(max_y + 1):
         print(f'{y:4d} ', end='')
-        for x in range(0, max_x + 2):
+        for x in range(max_x + 2):
             if (x, y) in path and tiles[(x, y)] == '.':
                 print('*', end='')
             elif (x, y) in tiles:
@@ -95,13 +92,16 @@ def part1(output = True):
     tiles, start_pt, end_pt = parse()
     neigh = make_neigh(tiles)
 
-    w, p = djikstra(neigh, defaultdict(lambda: -1), start_point=(start_pt, (0, 1)), danger_ignore_visited = True)
+    start = (start_pt, (0, 1))
+    end = (end_pt, (0, 1))
+
+    w, p = djikstra(neigh, defaultdict(lambda: -1), start_point=start, danger_ignore_visited = True)
 
     if output:
-        path = [p[0] for p in p[(end_pt, (0, 1))]]
+        path = [p[0] for p in p[end]]
         viz_path(tiles, path)
 
-    return -w[(end_pt, (0, 1))]
+    return -w[end]
 
 def squash(neigh, adj, wts, vis, dp, from_pt, end_pt):
     n = neigh[from_pt]
@@ -135,19 +135,20 @@ def explore(adj, wts, curr_dist, from_pt, end_pt, prev_dps):
     for n in neigh:
         if n in prev_dps:
             continue
+        n_dist = curr_dist + wts[(from_pt, n)]
         if n == end_pt:
-            return curr_dist + wts[(from_pt, n)]
-        max_dist = max(max_dist, explore(adj, wts, curr_dist + wts[(from_pt, n)], n, end_pt, set(prev_dps)))
+            return n_dist
+        max_dist = max(max_dist, explore(adj, wts, n_dist, n, end_pt, set(prev_dps)))
     return max_dist
 
 def part2(output = True):
     tiles, start_pt, end_pt = parse(ignore_slopes = True)
     neigh = make_neigh(tiles)
 
-    min_x, min_y = min_xy(tiles)
-    max_x, max_y = max_xy(tiles)
+    start = (start_pt, (0, 1))
+    end = (end_pt, (0, 1))
 
-    adj, wts = squash(neigh, defaultdict(set), {}, set(), (start_pt, (0, 1)), (start_pt, (0, 1)), (end_pt, (0,1)))
+    adj, wts = squash(neigh, defaultdict(set), {}, set(), start, start, end)
     dist = explore(adj, wts, 0, start_pt, end_pt, set())
 
     return dist
