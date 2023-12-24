@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-def djikstra(neighbors_dict, weights_dict = defaultdict(lambda: 1), start_point = None, end_point = None, keep_paths = True, dist_est = lambda x: 0):
+def djikstra(neighbors_dict, weights_dict = defaultdict(lambda: 1), start_point = None, end_point = None, keep_paths = True, dist_est = lambda x: 0, danger_ignore_visited = False):
     visited = set()
     curr_point = start_point
 
@@ -22,7 +22,8 @@ def djikstra(neighbors_dict, weights_dict = defaultdict(lambda: 1), start_point 
                 break
             if all(found_ends.values()):
                 break
-        visited.add(curr_point)
+        if not danger_ignore_visited:
+            visited.add(curr_point)
         if keep_paths:
             curr_path = paths[curr_point]
         if curr_point in neighbors_dict:
@@ -36,7 +37,7 @@ def djikstra(neighbors_dict, weights_dict = defaultdict(lambda: 1), start_point 
                     explore[curr_weight + dist_est(n)].add(n)
 
         buckets = sorted(explore.keys())
-        while curr_point in visited:
+        while curr_point in visited or danger_ignore_visited:
             found_point = False
             for b in buckets:
                 if len(explore[b]) != 0:
@@ -44,7 +45,7 @@ def djikstra(neighbors_dict, weights_dict = defaultdict(lambda: 1), start_point 
                     found_point = True
                     break
                 del explore[b]
-            if not found_point:
+            if not found_point or danger_ignore_visited:
                 break
         if not found_point:
             break
