@@ -33,15 +33,9 @@ def part1(output = True):
     for i in imp_nodes:
         edges[i[0][0]].remove(i[0][1])
 
-    w1, w2 = 0, 0
-    for e in edges:
-        w = djikstra(edges, start_point=e, keep_paths=False)
-        if w1 == 0:
-            w1 = len(w)
-        if len(w) == w1:
-            continue
-        w2 = len(w)
-        break
+    w = djikstra(edges, start_point=i[0][0], keep_paths=False)
+    w1 = len(w)
+    w2 = len(edges) - w1
 
     return w1 * w2
 
