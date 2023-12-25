@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from mrm.djikstra import djikstra
+from mrm.dijkstra import dijkstra
 from mrm.image import max_xy
 
 with open('data/aoc-2023-23.txt', encoding = 'utf-8') as f:
@@ -95,7 +95,7 @@ def part1(output = True):
     start = (start_pt, (0, 1))
     end = (end_pt, (0, 1))
 
-    w, p = djikstra(neigh, defaultdict(lambda: -1), start_point=start, danger_ignore_visited = True)
+    w, p = dijkstra(neigh, defaultdict(lambda: -1), start_point=start, danger_ignore_visited = True)
 
     if output:
         path = [p[0] for p in p[end]]

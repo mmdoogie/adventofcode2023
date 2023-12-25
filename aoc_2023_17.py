@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from mrm.djikstra import djikstra
+from mrm.dijkstra import dijkstra
 from mrm.image import max_xy
 
 with open('data/aoc-2023-17.txt', encoding = 'utf-8') as f:
@@ -53,7 +53,7 @@ def part1(output = True):
 
     start = (0, 0, NONE)
     ends = [(max_x, max_y, DOWN), (max_x, max_y, RIGHT)]
-    weights = djikstra(adj, wts, start_point = start, end_point = ends, keep_paths = False)
+    weights = dijkstra(adj, wts, start_point = start, end_point = ends, keep_paths = False)
 
     sol_weights = [weights[e] for e in ends]
     if output:
@@ -72,7 +72,7 @@ def part2(output = True):
 
     start = (0, 0, NONE)
     ends = [(max_x, max_y, DOWN), (max_x, max_y, RIGHT)]
-    weights = djikstra(adj, wts, start_point = start, end_point = ends, keep_paths = False)
+    weights = dijkstra(adj, wts, start_point = start, end_point = ends, keep_paths = False)
 
     sol_weights = [weights[e] for e in ends]
     if output:

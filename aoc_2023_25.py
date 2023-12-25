@@ -1,7 +1,7 @@
 from collections import defaultdict
 from itertools import combinations, pairwise
 
-from mrm.djikstra import djikstra
+from mrm.dijkstra import dijkstra
 
 with open('data/aoc-2023-25.txt', encoding = 'utf-8') as f:
     dat = [x.strip('\n') for x in f.readlines()]
@@ -23,7 +23,7 @@ def part1(output = True):
     psp = None
     for e1, e2 in combinations(edges, 2):
         if psp != e1:
-            w, p = djikstra(edges, start_point=e1)
+            w, p = dijkstra(edges, start_point=e1)
             psp = e1
         for pp in pairwise(p[e2]):
             crossings[pp] += 1
@@ -33,7 +33,7 @@ def part1(output = True):
     for i in imp_nodes:
         edges[i[0][0]].remove(i[0][1])
 
-    w = djikstra(edges, start_point=i[0][0], keep_paths=False)
+    w = dijkstra(edges, start_point=i[0][0], keep_paths=False)
     w1 = len(w)
     w2 = len(edges) - w1
 

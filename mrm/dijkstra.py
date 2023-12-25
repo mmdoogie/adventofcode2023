@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-def djikstra(neighbors_dict, weights_dict = defaultdict(lambda: 1), start_point = None, end_point = None, keep_paths = True, dist_est = lambda x: 0, danger_ignore_visited = False):
+def dijkstra(neighbors_dict, weights_dict = defaultdict(lambda: 1), start_point = None, end_point = None, keep_paths = True, dist_est = lambda x: 0, danger_ignore_visited = False):
     visited = set()
     curr_point = start_point
 
