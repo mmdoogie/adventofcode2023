@@ -1,5 +1,3 @@
-from math import log10, ceil
-
 import mrm.ansi_term as ansi
 
 with open('data/aoc-2023-05.txt', encoding = 'utf-8') as f:
@@ -50,31 +48,59 @@ def part1(output = True):
 
     return min_loc
 
+def split_ranges(in_ranges, trans_map):
+    unsplit = in_ranges
+    out_ranges = []
+
+    for map_dest, map_src, map_len in trans_map:
+        map_end = map_src + map_len - 1
+        map_adj = map_dest - map_src
+        next_unsplit = []
+        for rng_src, rng_len in unsplit:
+            rng_end = rng_src + rng_len - 1
+            if rng_src <= map_src <= rng_end:
+                split_start = map_src
+            elif map_src <= rng_src <= map_end:
+                split_start = rng_src
+            else:
+                next_unsplit += [(rng_src, rng_len)]
+                continue
+
+            if rng_src <= map_end <= rng_end:
+                split_end = map_end
+            elif map_src <= rng_end <= map_end:
+                split_end = rng_end
+            else:
+                next_unsplit += [(rng_src, rng_len)]
+                continue
+
+            out_ranges += [(split_start + map_adj , split_end - split_start + 1)]
+
+            if split_start > rng_src:
+                next_unsplit += [(rng_src, split_start - rng_src + 1 - 1)]
+            if split_end < rng_end:
+                next_unsplit += [(split_end + 1, rng_end - split_end - 1 + 1)]
+        unsplit = next_unsplit
+
+    return out_ranges
+
 def part2(output = True):
     seeds, maps = parse(seed_ranges = True)
-
-    step_size = int(pow(10, ceil(log10(max(s[1] for s in seeds) / 100))))
-    search_vals = {(ss, ss + sl, s): apply_maps(maps, s) for ss, sl in seeds for s in range(ss, ss + sl, step_size)}
-    rough_est = min(search_vals.items(), key = lambda x: x[1])
-
-    seed_range_start, seed_range_end, best_est = rough_est[0]
+    curr_ranges = seeds
 
     if output:
-        print(f'Best estimate: {best_est} in seed range {seed_range_start} to {seed_range_end}')
-        print(f'Step size: {step_size:<8d}, best estimate: {best_est:<10d} near loc {rough_est[1]}')
+        print('Seed ranges')
+        print(curr_ranges)
+        print()
 
-    while step_size > 1:
-        left_search  = max(best_est - step_size, seed_range_start)
-        right_search = min(best_est + step_size, seed_range_end)
-
-        step_size = step_size // 10
-        search_vals = {s: apply_maps(maps, s) for s in range(left_search, right_search, step_size)}
-        best_est, best_loc = min(search_vals.items(), key = lambda x: x[1])
-
+    for i, m in enumerate(maps):
+        curr_ranges = split_ranges(curr_ranges, m)
         if output:
-            print(f'Step size: {step_size:<8d}, best estimate: {best_est:<10d} near loc {best_loc}')
+            print('After map', i + 1)
+            print(curr_ranges)
+            print()
 
-    return best_loc
+    return sorted(curr_ranges)[0][0]
 
 if __name__ == '__main__':
     print('Part 1:', part1(True))
